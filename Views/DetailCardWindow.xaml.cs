@@ -32,9 +32,22 @@ namespace AgyUsageShower.Views
             }
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        private async void SwitchAccountButton_Click(object sender, RoutedEventArgs e)
         {
             AntigravityUsageService.TriggerGoogleLogin();
+            if (DataContext is MainViewModel vm)
+            {
+                await vm.RefreshUsageAsync();
+            }
+        }
+
+        private async void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            AntigravityUsageService.TriggerLogout();
+            if (DataContext is MainViewModel vm)
+            {
+                await vm.RefreshUsageAsync();
+            }
         }
 
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)

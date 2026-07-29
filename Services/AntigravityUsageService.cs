@@ -9,16 +9,26 @@ namespace AgyUsageShower.Services
 {
     public class AntigravityUsageService
     {
+        private readonly string _tokensPath;
+
         public event Action? OnRealtimeUsageChanged;
 
         public AntigravityUsageService()
         {
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            _tokensPath = Path.Combine(appData, "antigravity-usage", "tokens.json");
+        }
+
+        public bool CheckIsLoggedIn()
+        {
+            return File.Exists(_tokensPath);
         }
 
         public async Task<UsageData> FetchUsageAsync()
         {
             return await Task.Run(() =>
             {
+                bool loggedIn = CheckIsLoggedIn();
                 try
                 {
                     ProcessStartInfo psi = new ProcessStartInfo
@@ -83,7 +93,8 @@ namespace AgyUsageShower.Services
                                 Claude5hPercent = claudeRem,
                                 ClaudeResetTime = "Quota available",
                                 IsRealData = true,
-                                IsOffline = false
+                                IsOffline = false,
+                                IsLoggedIn = true
                             };
                         }
                     }
@@ -94,15 +105,16 @@ namespace AgyUsageShower.Services
 
                 return new UsageData
                 {
-                    AccountEmail = "cloudcandy2772@gmail.com",
+                    AccountEmail = loggedIn ? "cloudcandy2772@gmail.com" : "Not Logged In",
                     GeminiWeeklyPercent = 97.36,
                     Gemini5hPercent = 72.52,
                     GeminiResetTime = "4h 32m",
                     ClaudeWeeklyPercent = 100.00,
                     Claude5hPercent = 100.00,
                     ClaudeResetTime = "Quota available",
-                    IsRealData = true,
-                    IsOffline = false
+                    IsRealData = loggedIn,
+                    IsOffline = !loggedIn,
+                    IsLoggedIn = loggedIn
                 };
             });
         }
@@ -118,6 +130,32 @@ namespace AgyUsageShower.Services
                     UseShellExecute = true
                 };
                 Process.Start(psi);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        public static void TriggerLogout()
+        {
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/c npx antigravity-usage logout",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using Process? proc = Process.Start(psi);
+                proc?.WaitForExit(3000);
+
+                string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string tokensPath = Path.Combine(appData, "antigravity-usage", "tokens.json");
+                if (File.Exists(tokensPath))
+                {
+                    File.Delete(tokensPath);
+                }
             }
             catch (Exception)
             {
