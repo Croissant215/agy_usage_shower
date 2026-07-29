@@ -1,12 +1,11 @@
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace AgyUsageShower.Controls
 {
-    public partial class RunCatControl : UserControl
+    public partial class RunCatControl : System.Windows.Controls.UserControl
     {
         private readonly DispatcherTimer _animTimer;
         private int _currentFrame = 0;
@@ -59,7 +58,6 @@ namespace AgyUsageShower.Controls
 
         private void UpdateSpeed()
         {
-            // Higher consumption = Cat runs faster!
             double consumption = Math.Max(0.0, Math.Min(100.0, 100.0 - RemainingQuotaPercent));
             int intervalMs = (int)Math.Max(35.0, 240.0 - (consumption * 2.05));
             _animTimer.Interval = TimeSpan.FromMilliseconds(intervalMs);

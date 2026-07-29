@@ -23,5 +23,3 @@ C:\Users\test\orca\agy_usage_shower\obj\Release\net9.0-windows\AgyUsageShower.ge
 C:\Users\test\orca\agy_usage_shower\obj\Release\net9.0-windows\ref\AgyUsageShower.dll
 C:\Users\test\orca\agy_usage_shower\obj\Release\net9.0-windows\Controls\RunCatControl.baml
 C:\Users\test\orca\agy_usage_shower\obj\Release\net9.0-windows\Controls\RunCatControl.g.cs
-C:\Users\test\orca\agy_usage_shower\obj\Release\net9.0-windows\GeneratedInternalTypeHelper.g.cs
-C:\Users\test\orca\agy_usage_shower\obj\Release\net9.0-windows\AgyUsageShower_MarkupCompile.lref

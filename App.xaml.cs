@@ -1,8 +1,8 @@
-using System.Windows;
+using System;
 
 namespace AgyUsageShower
 {
-    public partial class App : Application
+    public partial class App : System.Windows.Application
     {
     }
 }
