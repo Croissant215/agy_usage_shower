@@ -1,0 +1,62 @@
+<Window x:Class="AgyUsageShower.Views.DetailCardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Antigravity Usage Details"
+        Width="320" Height="260"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Deactivated="Window_Deactivated">
+
+    <Border Background="#1E1E2E" CornerRadius="12" BorderBrush="#313244" BorderThickness="1.5" Margin="8">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" BlurRadius="16" Opacity="0.5" Direction="270" ShadowDepth="4"/>
+        </Border.Effect>
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <DockPanel Grid.Row="0" Margin="0,0,0,12">
+                <TextBlock Text="🚀 AGY Usage Details" Foreground="#CDD6F4" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                <Button Content="✕" Click="CloseButton_Click" HorizontalAlignment="Right" Foreground="#A6ADC8" Background="Transparent" BorderThickness="0" FontSize="12" Cursor="Hand"/>
+            </DockPanel>
+
+            <!-- Body Details -->
+            <StackPanel Grid.Row="1">
+                <!-- Gemini 3.5 Pro -->
+                <TextBlock Text="{Binding CurrentUsage.ModelName}" Foreground="#BAC2DE" FontSize="11" FontWeight="SemiBold"/>
+                <Grid Margin="0,2,0,6">
+                    <ProgressBar Height="8" Value="{Binding CurrentUsage.QuotaPercent}" Minimum="0" Maximum="100" Foreground="#A6E3A1" Background="#313244"/>
+                </Grid>
+                <DockPanel Margin="0,0,0,8">
+                    <TextBlock Text="Quota Remaining:" Foreground="#A6ADC8" FontSize="11"/>
+                    <TextBlock Text="{Binding QuotaFormatted}" Foreground="#A6E3A1" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right"/>
+                </DockPanel>
+
+                <!-- Gemini 3.5 Flash -->
+                <TextBlock Text="Gemini 3.5 Flash" Foreground="#BAC2DE" FontSize="11" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                <Grid Margin="0,2,0,6">
+                    <ProgressBar Height="8" Value="{Binding CurrentUsage.FlashQuotaPercent}" Minimum="0" Maximum="100" Foreground="#89B4FA" Background="#313244"/>
+                </Grid>
+
+                <!-- Reset Timer -->
+                <DockPanel Margin="0,4,0,0">
+                    <TextBlock Text="Reset In:" Foreground="#A6ADC8" FontSize="11"/>
+                    <TextBlock Text="{Binding CurrentUsage.ResetCountdown}" Foreground="#F9E2AF" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right"/>
+                </DockPanel>
+            </StackPanel>
+
+            <!-- Footer -->
+            <DockPanel Grid.Row="2" Margin="0,12,0,0">
+                <TextBlock Text="Updated just now" Foreground="#585B70" FontSize="10" VerticalAlignment="Center"/>
+                <Button Content="🔄 Refresh" Click="RefreshButton_Click" HorizontalAlignment="Right" Background="#313244" Foreground="#CDD6F4" BorderThickness="0" Padding="8,4" FontSize="10" Cursor="Hand"/>
+            </DockPanel>
+        </Grid>
+    </Border>
+</Window>

@@ -1,0 +1,5 @@
+C:\Users\test\orca\agy_usage_shower\bin\Release\net9.0-windows\publish\AgyUsageShower.exe
+C:\Users\test\orca\agy_usage_shower\bin\Release\net9.0-windows\publish\AgyUsageShower.dll
+C:\Users\test\orca\agy_usage_shower\bin\Release\net9.0-windows\publish\AgyUsageShower.deps.json
+C:\Users\test\orca\agy_usage_shower\bin\Release\net9.0-windows\publish\AgyUsageShower.runtimeconfig.json
+C:\Users\test\orca\agy_usage_shower\bin\Release\net9.0-windows\publish\AgyUsageShower.pdb
