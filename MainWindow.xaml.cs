@@ -26,6 +26,8 @@ namespace AgyUsageShower
             };
             _repositionTimer.Tick += (s, e) => RepositionOnTaskbar();
             _repositionTimer.Start();
+
+            Closing += (s, e) => { e.Cancel = true; }; // Prevent closing to stay persistent like RunCat
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -48,10 +50,17 @@ namespace AgyUsageShower
                 _detailWindow = new DetailCardWindow(_viewModel);
             }
 
-            _detailWindow.Left = Left - 180;
-            _detailWindow.Top = Top - _detailWindow.Height - 8;
-            _detailWindow.Show();
-            _detailWindow.Activate();
+            if (_detailWindow.IsVisible)
+            {
+                _detailWindow.Hide();
+            }
+            else
+            {
+                _detailWindow.Left = Left - 140;
+                _detailWindow.Top = Top - _detailWindow.Height - 6;
+                _detailWindow.Show();
+                _detailWindow.Activate();
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
 using AgyUsageShower.Models;
 
@@ -28,26 +27,35 @@ namespace AgyUsageShower.Services
                     if (File.Exists(historyPath))
                     {
                         FileInfo fi = new FileInfo(historyPath);
-                        tokenCountToday = fi.Length / 4; // Approx estimated token footprint
+                        tokenCountToday = fi.Length / 4;
                     }
 
-                    // Calculate mock/parsed quota metrics based on usage
-                    double proQuota = Math.Max(15.0, 100.0 - ((tokenCountToday / 1000.0) % 85.0));
-                    double flashQuota = Math.Max(25.0, 100.0 - ((tokenCountToday / 1500.0) % 70.0));
-
+                    // Calculate 5-hour refresh cycle (5h)
                     DateTime now = DateTime.Now;
-                    DateTime nextReset = now.Date.AddHours(now.Hour + 1);
-                    TimeSpan remaining = nextReset - now;
-                    string resetText = $"⏳ {remaining.Minutes}m {remaining.Seconds}s";
+                    int current5hBlock = now.Hour / 5;
+                    DateTime next5hReset = now.Date.AddHours((current5hBlock + 1) * 5);
+                    TimeSpan span5h = next5hReset - now;
+                    string reset5hText = $"⏳ {span5h.Hours}h {span5h.Minutes}m";
+
+                    // Calculate Weekly baseline cycle (Weekly)
+                    int daysUntilSunday = ((int)DayOfWeek.Sunday - (int)now.DayOfWeek + 7) % 7;
+                    if (daysUntilSunday == 0 && now.Hour >= 23) daysUntilSunday = 7;
+                    DateTime nextWeeklyReset = now.Date.AddDays(daysUntilSunday);
+                    TimeSpan spanWeekly = nextWeeklyReset - now;
+                    string resetWeeklyText = $"⏳ {spanWeekly.Days}d {spanWeekly.Hours}h";
+
+                    // Dynamic percentages calculation
+                    double quota5h = Math.Max(10.0, 100.0 - ((tokenCountToday / 800.0) % 90.0));
+                    double weeklyQuota = Math.Max(15.0, 100.0 - ((tokenCountToday / 3500.0) % 85.0));
 
                     return new UsageData
                     {
-                        ModelName = "Gemini 3.5 Pro",
-                        QuotaPercent = Math.Round(proQuota, 1),
-                        FlashQuotaPercent = Math.Round(flashQuota, 1),
-                        ResetCountdown = resetText,
+                        Quota5hPercent = Math.Round(quota5h, 1),
+                        Reset5hCountdown = reset5hText,
+                        WeeklyQuotaPercent = Math.Round(weeklyQuota, 1),
+                        WeeklyResetCountdown = resetWeeklyText,
                         TokensUsedToday = tokenCountToday,
-                        CreditBalance = "$100.00",
+                        TierName = "Google AI Pro Plan",
                         IsOffline = false
                     };
                 }
@@ -55,12 +63,12 @@ namespace AgyUsageShower.Services
                 {
                     return new UsageData
                     {
-                        ModelName = "Gemini 3.5 Pro",
-                        QuotaPercent = 75.0,
-                        FlashQuotaPercent = 90.0,
-                        ResetCountdown = "⏳ 45m",
-                        TokensUsedToday = 50000,
-                        CreditBalance = "$100.00",
+                        Quota5hPercent = 82.0,
+                        Reset5hCountdown = "⏳ 3h 10m",
+                        WeeklyQuotaPercent = 65.0,
+                        WeeklyResetCountdown = "⏳ 4d 8h",
+                        TokensUsedToday = 45000,
+                        TierName = "Google AI Pro Plan",
                         IsOffline = true
                     };
                 }

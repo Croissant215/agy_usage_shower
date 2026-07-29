@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="AGY Usage Overlay"
-        Width="140" Height="32"
+        Width="165" Height="32"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -11,20 +11,19 @@
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
         Loaded="Window_Loaded">
 
-    <Border Background="#181825" CornerRadius="6" BorderBrush="#313244" BorderThickness="1" Margin="2" Cursor="Hand">
+    <Border Background="#181825" CornerRadius="6" BorderBrush="#313244" BorderThickness="1" Margin="1" Cursor="Hand">
         <Border.ToolTip>
-            <ToolTip Content="Click for detailed Antigravity usage info"/>
+            <ToolTip Content="Antigravity Quotas: 5h Refresh &amp; Weekly Baseline. Click for details."/>
         </Border.ToolTip>
 
-        <Grid Margin="6,2">
+        <Grid Margin="5,2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Status Dot -->
-            <Ellipse Grid.Column="0" Width="8" Height="8" VerticalAlignment="Center" Margin="0,0,6,0">
+            <!-- Status Dot Indicator -->
+            <Ellipse Grid.Column="0" Width="7" Height="7" VerticalAlignment="Center" Margin="0,0,5,0">
                 <Ellipse.Style>
                     <Style TargetType="Ellipse">
                         <Setter Property="Fill" Value="#40C057"/>
@@ -37,17 +36,29 @@
                 </Ellipse.Style>
             </Ellipse>
 
-            <!-- Model / Quota Bar -->
-            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <DockPanel>
-                    <TextBlock Text="AGY" Foreground="#89B4FA" FontSize="10" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding QuotaFormatted}" Foreground="#CDD6F4" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Right"/>
-                </DockPanel>
-                <ProgressBar Height="3" Value="{Binding CurrentUsage.QuotaPercent}" Minimum="0" Maximum="100" Margin="0,2,0,0" Foreground="{Binding QuotaColorHex}" Background="#313244"/>
-            </StackPanel>
+            <!-- Quotas: 5h & Weekly -->
+            <Grid Grid.Column="1" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <!-- Reset Timer -->
-            <TextBlock Grid.Column="2" Text="{Binding CurrentUsage.ResetCountdown}" Foreground="#F9E2AF" FontSize="9" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                <!-- Top Row: 5h limit -->
+                <DockPanel Grid.Row="0">
+                    <TextBlock Text="5h" Foreground="#89B4FA" FontSize="9" FontWeight="Bold" Width="18"/>
+                    <TextBlock Text="{Binding Quota5hFormatted}" Foreground="#CDD6F4" FontSize="9" FontWeight="SemiBold" Width="28"/>
+                    <ProgressBar Height="3" Value="{Binding CurrentUsage.Quota5hPercent}" Minimum="0" Maximum="100" Margin="2,0,4,0" Foreground="{Binding Color5hHex}" Background="#313244" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding CurrentUsage.Reset5hCountdown}" Foreground="#F9E2AF" FontSize="8.5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </DockPanel>
+
+                <!-- Bottom Row: Weekly limit -->
+                <DockPanel Grid.Row="1" Margin="0,1,0,0">
+                    <TextBlock Text="Wk" Foreground="#CBA6F7" FontSize="9" FontWeight="Bold" Width="18"/>
+                    <TextBlock Text="{Binding WeeklyFormatted}" Foreground="#CDD6F4" FontSize="9" FontWeight="SemiBold" Width="28"/>
+                    <ProgressBar Height="3" Value="{Binding CurrentUsage.WeeklyQuotaPercent}" Minimum="0" Maximum="100" Margin="2,0,4,0" Foreground="{Binding ColorWeeklyHex}" Background="#313244" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding CurrentUsage.WeeklyResetCountdown}" Foreground="#A6ADC8" FontSize="8.5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </DockPanel>
+            </Grid>
         </Grid>
     </Border>
 </Window>
