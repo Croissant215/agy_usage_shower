@@ -24,23 +24,20 @@ namespace AgyUsageShower
             {
                 Interval = TimeSpan.FromSeconds(2)
             };
-            _repositionTimer.Tick += (s, e) => RepositionOnTaskbar();
+            _repositionTimer.Tick += (s, e) => EmbedInsideTaskbar();
             _repositionTimer.Start();
 
-            Closing += (s, e) => { e.Cancel = true; }; // Keep permanently pinned on Taskbar
+            Closing += (s, e) => { e.Cancel = true; };
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Win32TaskbarService.SetOverlayWindowStyles(this);
-            RepositionOnTaskbar();
+            EmbedInsideTaskbar();
         }
 
-        private void RepositionOnTaskbar()
+        private void EmbedInsideTaskbar()
         {
-            var (left, top) = Win32TaskbarService.CalculateRightDockPosition(Width, Height, this);
-            Left = left;
-            Top = top;
+            Win32TaskbarService.EmbedInsideTaskbar(this, Width, Height);
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -56,8 +53,11 @@ namespace AgyUsageShower
             }
             else
             {
-                _detailWindow.Left = Left + (Width / 2.0) - (_detailWindow.Width / 2.0);
-                _detailWindow.Top = Top - _detailWindow.Height - 6;
+                double screenWidth = SystemParameters.PrimaryScreenWidth;
+                double screenHeight = SystemParameters.PrimaryScreenHeight;
+
+                _detailWindow.Left = screenWidth - _detailWindow.Width - 20;
+                _detailWindow.Top = screenHeight - _detailWindow.Height - 45;
                 _detailWindow.Show();
                 _detailWindow.Activate();
             }
