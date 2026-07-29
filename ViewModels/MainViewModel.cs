@@ -58,17 +58,18 @@ namespace AgyUsageShower.ViewModels
         public string Quota5hFormatted => $"{CurrentUsage.Gemini5hPercent:F2}%";
         public string WeeklyFormatted => $"{CurrentUsage.GeminiWeeklyPercent:F2}%";
 
-        // Color Tokens matching exact reference image palette
-        public string WidgetBgHex => IsDarkTheme ? "#12111A" : "#FFFFFF";
-        public string WidgetBorderHex => IsDarkTheme ? "#262335" : "#EAE6FA";
+        // Semi-transparent ARGB Hex Colors (80% / 90% opacity for glass effect)
+        public string WidgetBgHex => IsDarkTheme ? "#C812111A" : "#D8FFFFFF";
+        public string CardBgHex => IsDarkTheme ? "#E612111A" : "#F2FFFFFF";
+        public string WidgetBorderHex => IsDarkTheme ? "#663B3754" : "#66EAE6FA";
         public string MainTextHex => IsDarkTheme ? "#FFFFFF" : "#1A1828";
         public string SubTextHex => IsDarkTheme ? "#A09CBA" : "#6E6A8A";
-        public string DividerHex => IsDarkTheme ? "#262335" : "#EAE6FA";
+        public string DividerHex => IsDarkTheme ? "#443B3754" : "#44EAE6FA";
 
         public string BrandPinkHex => "#FF2E93";
         public string Progress5hHex => "#FF2E93";  // Vibrant Pink
         public string ProgressWkHex => "#8C52FF";  // Electric Violet
-        public string ProgressBgHex => IsDarkTheme ? "#231F35" : "#F0EDF9";
+        public string ProgressBgHex => IsDarkTheme ? "#55231F35" : "#55F0EDF9";
         public string TimerTextHex => IsDarkTheme ? "#FFAE00" : "#D97706";
         public string ThemeIcon => IsDarkTheme ? "🌙" : "☀️";
 
@@ -80,6 +81,7 @@ namespace AgyUsageShower.ViewModels
         private void NotifyThemePropertiesChanged()
         {
             OnPropertyChanged(nameof(WidgetBgHex));
+            OnPropertyChanged(nameof(CardBgHex));
             OnPropertyChanged(nameof(WidgetBorderHex));
             OnPropertyChanged(nameof(MainTextHex));
             OnPropertyChanged(nameof(SubTextHex));

@@ -10,9 +10,9 @@
         ShowInTaskbar="False"
         Deactivated="Window_Deactivated">
 
-    <Border Background="{Binding WidgetBgHex}" CornerRadius="12" BorderBrush="{Binding WidgetBorderHex}" BorderThickness="1.5" Margin="8">
+    <Border Background="{Binding CardBgHex}" CornerRadius="12" BorderBrush="{Binding WidgetBorderHex}" BorderThickness="1.5" Margin="8">
         <Border.Effect>
-            <DropShadowEffect Color="#000000" BlurRadius="16" Opacity="0.4" Direction="270" ShadowDepth="4"/>
+            <DropShadowEffect Color="#000000" BlurRadius="20" Opacity="0.5" Direction="270" ShadowDepth="4"/>
         </Border.Effect>
         <Grid Margin="16">
             <Grid.RowDefinitions>

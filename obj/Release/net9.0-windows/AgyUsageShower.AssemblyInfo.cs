@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AgyUsageShower")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+20794c829e342fbed9297a90095a41f17354f0df")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0f1cbe4f5a2e6d819a36b31d254dd6da6b283019")]
 [assembly: System.Reflection.AssemblyProductAttribute("AgyUsageShower")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AgyUsageShower")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
