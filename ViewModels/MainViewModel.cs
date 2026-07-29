@@ -13,6 +13,7 @@ namespace AgyUsageShower.ViewModels
         private readonly AntigravityUsageService _usageService;
         private readonly DispatcherTimer _timer;
         private UsageData _currentUsage;
+        private bool _isDarkTheme = true;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -40,22 +41,52 @@ namespace AgyUsageShower.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(Quota5hFormatted));
                 OnPropertyChanged(nameof(WeeklyFormatted));
-                OnPropertyChanged(nameof(Color5hHex));
-                OnPropertyChanged(nameof(ColorWeeklyHex));
             }
         }
 
-        public string Quota5hFormatted => $"{CurrentUsage.Quota5hPercent}%";
-        public string WeeklyFormatted => $"{CurrentUsage.WeeklyQuotaPercent}%";
-
-        public string Color5hHex => GetColorForPercent(CurrentUsage.Quota5hPercent);
-        public string ColorWeeklyHex => GetColorForPercent(CurrentUsage.WeeklyQuotaPercent);
-
-        private static string GetColorForPercent(double percent)
+        public bool IsDarkTheme
         {
-            if (percent >= 70) return "#40C057"; // Green
-            if (percent >= 30) return "#FAB005"; // Yellow
-            return "#FA5252"; // Red
+            get => _isDarkTheme;
+            set
+            {
+                _isDarkTheme = value;
+                OnPropertyChanged();
+                NotifyThemePropertiesChanged();
+            }
+        }
+
+        public string Quota5hFormatted => $"{CurrentUsage.Gemini5hPercent:F2}%";
+        public string WeeklyFormatted => $"{CurrentUsage.GeminiWeeklyPercent:F2}%";
+
+        // Color Tokens matching exact reference image palette
+        public string WidgetBgHex => IsDarkTheme ? "#12111A" : "#FFFFFF";
+        public string WidgetBorderHex => IsDarkTheme ? "#262335" : "#EAE6FA";
+        public string MainTextHex => IsDarkTheme ? "#FFFFFF" : "#1A1828";
+        public string SubTextHex => IsDarkTheme ? "#A09CBA" : "#6E6A8A";
+        public string DividerHex => IsDarkTheme ? "#262335" : "#EAE6FA";
+
+        public string BrandPinkHex => "#FF2E93";
+        public string Progress5hHex => "#FF2E93";  // Vibrant Pink
+        public string ProgressWkHex => "#8C52FF";  // Electric Violet
+        public string ProgressBgHex => IsDarkTheme ? "#231F35" : "#F0EDF9";
+        public string TimerTextHex => IsDarkTheme ? "#FFAE00" : "#D97706";
+        public string ThemeIcon => IsDarkTheme ? "🌙" : "☀️";
+
+        public void ToggleTheme()
+        {
+            IsDarkTheme = !IsDarkTheme;
+        }
+
+        private void NotifyThemePropertiesChanged()
+        {
+            OnPropertyChanged(nameof(WidgetBgHex));
+            OnPropertyChanged(nameof(WidgetBorderHex));
+            OnPropertyChanged(nameof(MainTextHex));
+            OnPropertyChanged(nameof(SubTextHex));
+            OnPropertyChanged(nameof(DividerHex));
+            OnPropertyChanged(nameof(ProgressBgHex));
+            OnPropertyChanged(nameof(TimerTextHex));
+            OnPropertyChanged(nameof(ThemeIcon));
         }
 
         public async Task RefreshUsageAsync()

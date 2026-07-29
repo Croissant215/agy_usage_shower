@@ -10,9 +10,9 @@
         ShowInTaskbar="False"
         Deactivated="Window_Deactivated">
 
-    <Border Background="#1E1E2E" CornerRadius="12" BorderBrush="#313244" BorderThickness="1.5" Margin="8">
+    <Border Background="{Binding WidgetBgHex}" CornerRadius="12" BorderBrush="{Binding WidgetBorderHex}" BorderThickness="1.5" Margin="8">
         <Border.Effect>
-            <DropShadowEffect Color="#000000" BlurRadius="16" Opacity="0.5" Direction="270" ShadowDepth="4"/>
+            <DropShadowEffect Color="#000000" BlurRadius="16" Opacity="0.4" Direction="270" ShadowDepth="4"/>
         </Border.Effect>
         <Grid Margin="16">
             <Grid.RowDefinitions>
@@ -24,60 +24,63 @@
             <!-- Header -->
             <DockPanel Grid.Row="0" Margin="0,0,0,12">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="🐱 RunCat Models &amp; Quotas" Foreground="#CDD6F4" FontSize="14" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding CurrentUsage.AccountEmail, StringFormat='Account: {0}'}" Foreground="#89B4FA" FontSize="10" Margin="0,2,0,0"/>
+                    <DockPanel>
+                        <TextBlock Text="⚡ AGY Models &amp; Quotas" Foreground="{Binding MainTextHex}" FontSize="14" FontWeight="Bold"/>
+                        <Button Content="{Binding ThemeIcon}" Click="ThemeToggle_Click" Background="Transparent" BorderThickness="0" FontSize="12" Margin="8,0,0,0" Cursor="Hand"/>
+                    </DockPanel>
+                    <TextBlock Text="{Binding CurrentUsage.AccountEmail, StringFormat='Account: {0}'}" Foreground="{Binding BrandPinkHex}" FontSize="10" Margin="0,2,0,0"/>
                 </StackPanel>
-                <Button Content="✕" Click="CloseButton_Click" HorizontalAlignment="Right" Foreground="#A6ADC8" Background="Transparent" BorderThickness="0" FontSize="12" Cursor="Hand" VerticalAlignment="Top"/>
+                <Button Content="✕" Click="CloseButton_Click" HorizontalAlignment="Right" Foreground="{Binding SubTextHex}" Background="Transparent" BorderThickness="0" FontSize="12" Cursor="Hand" VerticalAlignment="Top"/>
             </DockPanel>
 
             <!-- Body Details -->
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <!-- GEMINI MODELS -->
-                    <Border Background="#181825" CornerRadius="8" Padding="10" Margin="0,0,0,10">
+                    <Border Background="{Binding ProgressBgHex}" CornerRadius="8" Padding="10" Margin="0,0,0,10">
                         <StackPanel>
-                            <TextBlock Text="GEMINI MODELS" Foreground="#F9E2AF" FontSize="11" FontWeight="Bold"/>
-                            <TextBlock Text="Gemini Flash, Gemini Pro" Foreground="#A6ADC8" FontSize="9.5" Margin="0,1,0,8"/>
+                            <TextBlock Text="GEMINI MODELS" Foreground="{Binding BrandPinkHex}" FontSize="11" FontWeight="Bold"/>
+                            <TextBlock Text="Gemini Flash, Gemini Pro" Foreground="{Binding SubTextHex}" FontSize="9.5" Margin="0,1,0,8"/>
 
                             <!-- Weekly Limit -->
                             <DockPanel Margin="0,2,0,1">
-                                <TextBlock Text="Weekly Limit" Foreground="#CDD6F4" FontSize="10"/>
-                                <TextBlock Text="{Binding CurrentUsage.GeminiWeeklyPercent, StringFormat='{}{0:F2}%'}" Foreground="#F9E2AF" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                <TextBlock Text="Weekly Limit" Foreground="{Binding MainTextHex}" FontSize="10"/>
+                                <TextBlock Text="{Binding CurrentUsage.GeminiWeeklyPercent, StringFormat='{}{0:F2}%'}" Foreground="{Binding ProgressWkHex}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
                             </DockPanel>
-                            <ProgressBar Height="6" Value="{Binding CurrentUsage.GeminiWeeklyPercent}" Minimum="0" Maximum="100" Foreground="#F9E2AF" Background="#313244" Margin="0,2,0,2"/>
-                            <TextBlock Text="35% remaining · Refreshes in 7m" Foreground="#A6ADC8" FontSize="9" Margin="0,0,0,8"/>
+                            <ProgressBar Height="6" Value="{Binding CurrentUsage.GeminiWeeklyPercent}" Minimum="0" Maximum="100" Foreground="{Binding ProgressWkHex}" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
+                            <TextBlock Text="35% remaining · Refreshes in 7m" Foreground="{Binding SubTextHex}" FontSize="9" Margin="0,0,0,8"/>
 
                             <!-- Five Hour Limit -->
                             <DockPanel Margin="0,2,0,1">
-                                <TextBlock Text="Five Hour Limit" Foreground="#CDD6F4" FontSize="10"/>
-                                <TextBlock Text="{Binding CurrentUsage.Gemini5hPercent, StringFormat='{}{0:F2}%'}" Foreground="#FAB005" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                <TextBlock Text="Five Hour Limit" Foreground="{Binding MainTextHex}" FontSize="10"/>
+                                <TextBlock Text="{Binding CurrentUsage.Gemini5hPercent, StringFormat='{}{0:F2}%'}" Foreground="{Binding BrandPinkHex}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
                             </DockPanel>
-                            <ProgressBar Height="6" Value="{Binding CurrentUsage.Gemini5hPercent}" Minimum="0" Maximum="100" Foreground="#FAB005" Background="#313244" Margin="0,2,0,2"/>
-                            <TextBlock Text="29% remaining · Refreshes in 7m" Foreground="#A6ADC8" FontSize="9"/>
+                            <ProgressBar Height="6" Value="{Binding CurrentUsage.Gemini5hPercent}" Minimum="0" Maximum="100" Foreground="{Binding BrandPinkHex}" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
+                            <TextBlock Text="29% remaining · Refreshes in 7m" Foreground="{Binding SubTextHex}" FontSize="9"/>
                         </StackPanel>
                     </Border>
 
                     <!-- CLAUDE AND GPT MODELS -->
-                    <Border Background="#181825" CornerRadius="8" Padding="10">
+                    <Border Background="{Binding ProgressBgHex}" CornerRadius="8" Padding="10">
                         <StackPanel>
-                            <TextBlock Text="CLAUDE AND GPT MODELS" Foreground="#A6E3A1" FontSize="11" FontWeight="Bold"/>
-                            <TextBlock Text="Claude Opus, Claude Sonnet, GPT-OSS" Foreground="#A6ADC8" FontSize="9.5" Margin="0,1,0,8"/>
+                            <TextBlock Text="CLAUDE AND GPT MODELS" Foreground="#00E676" FontSize="11" FontWeight="Bold"/>
+                            <TextBlock Text="Claude Opus, Claude Sonnet, GPT-OSS" Foreground="{Binding SubTextHex}" FontSize="9.5" Margin="0,1,0,8"/>
 
                             <!-- Weekly Limit -->
                             <DockPanel Margin="0,2,0,1">
-                                <TextBlock Text="Weekly Limit" Foreground="#CDD6F4" FontSize="10"/>
-                                <TextBlock Text="100.00%" Foreground="#A6E3A1" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                <TextBlock Text="Weekly Limit" Foreground="{Binding MainTextHex}" FontSize="10"/>
+                                <TextBlock Text="100.00%" Foreground="#00E676" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
                             </DockPanel>
-                            <ProgressBar Height="6" Value="100" Minimum="0" Maximum="100" Foreground="#A6E3A1" Background="#313244" Margin="0,2,0,2"/>
-                            <TextBlock Text="Quota available" Foreground="#A6ADC8" FontSize="9" Margin="0,0,0,8"/>
+                            <ProgressBar Height="6" Value="100" Minimum="0" Maximum="100" Foreground="#00E676" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
+                            <TextBlock Text="Quota available" Foreground="{Binding SubTextHex}" FontSize="9" Margin="0,0,0,8"/>
 
                             <!-- Five Hour Limit -->
                             <DockPanel Margin="0,2,0,1">
-                                <TextBlock Text="Five Hour Limit" Foreground="#CDD6F4" FontSize="10"/>
-                                <TextBlock Text="100.00%" Foreground="#A6E3A1" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                <TextBlock Text="Five Hour Limit" Foreground="{Binding MainTextHex}" FontSize="10"/>
+                                <TextBlock Text="100.00%" Foreground="#00E676" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
                             </DockPanel>
-                            <ProgressBar Height="6" Value="100" Minimum="0" Maximum="100" Foreground="#A6E3A1" Background="#313244" Margin="0,2,0,2"/>
-                            <TextBlock Text="Quota available" Foreground="#A6ADC8" FontSize="9"/>
+                            <ProgressBar Height="6" Value="100" Minimum="0" Maximum="100" Foreground="#00E676" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
+                            <TextBlock Text="Quota available" Foreground="{Binding SubTextHex}" FontSize="9"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -85,8 +88,8 @@
 
             <!-- Footer -->
             <DockPanel Grid.Row="2" Margin="0,10,0,0">
-                <TextBlock Text="Real-time AGY Sync" Foreground="#585B70" FontSize="9.5" VerticalAlignment="Center"/>
-                <Button Content="🔄 Sync Now" Click="RefreshButton_Click" HorizontalAlignment="Right" Background="#313244" Foreground="#CDD6F4" BorderThickness="0" Padding="8,4" FontSize="10" Cursor="Hand"/>
+                <TextBlock Text="Real-time AGY Sync" Foreground="{Binding SubTextHex}" FontSize="9.5" VerticalAlignment="Center"/>
+                <Button Content="🔄 Sync Now" Click="RefreshButton_Click" HorizontalAlignment="Right" Background="{Binding ProgressBgHex}" Foreground="{Binding MainTextHex}" BorderThickness="0" Padding="8,4" FontSize="10" Cursor="Hand"/>
             </DockPanel>
         </Grid>
     </Border>

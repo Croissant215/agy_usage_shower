@@ -22,6 +22,14 @@ namespace AgyUsageShower.Views
             Hide();
         }
 
+        private void ThemeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                vm.ToggleTheme();
+            }
+        }
+
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainViewModel vm)

@@ -40,6 +40,12 @@ namespace AgyUsageShower
             Win32TaskbarService.EmbedInsideTaskbar(this, Width, Height);
         }
 
+        private void ThemeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.ToggleTheme();
+            e.Handled = true;
+        }
+
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (_detailWindow == null)
