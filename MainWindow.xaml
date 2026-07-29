@@ -1,8 +1,9 @@
 <Window x:Class="AgyUsageShower.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="AGY Usage Overlay"
-        Width="165" Height="32"
+        xmlns:controls="clr-namespace:AgyUsageShower.Controls"
+        Title="AGY RunCat Overlay"
+        Width="180" Height="34"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -13,28 +14,17 @@
 
     <Border Background="#181825" CornerRadius="6" BorderBrush="#313244" BorderThickness="1" Margin="1" Cursor="Hand">
         <Border.ToolTip>
-            <ToolTip Content="Antigravity Quotas: 5h Refresh &amp; Weekly Baseline. Click for details."/>
+            <ToolTip Content="RunCat Antigravity Quota Monitor: Gemini Weekly 35.09%, 5h 29.17% (Reset in 7m). Click for details."/>
         </Border.ToolTip>
 
-        <Grid Margin="5,2">
+        <Grid Margin="4,2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Status Dot Indicator -->
-            <Ellipse Grid.Column="0" Width="7" Height="7" VerticalAlignment="Center" Margin="0,0,5,0">
-                <Ellipse.Style>
-                    <Style TargetType="Ellipse">
-                        <Setter Property="Fill" Value="#40C057"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding CurrentUsage.IsOffline}" Value="True">
-                                <Setter Property="Fill" Value="#FA5252"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Ellipse.Style>
-            </Ellipse>
+            <!-- RunCat Running Cat Animation -->
+            <controls:RunCatControl Grid.Column="0" RemainingQuotaPercent="{Binding CurrentUsage.Gemini5hPercent}" VerticalAlignment="Center" Margin="2,0,6,0"/>
 
             <!-- Quotas: 5h & Weekly -->
             <Grid Grid.Column="1" VerticalAlignment="Center">
@@ -46,17 +36,17 @@
                 <!-- Top Row: 5h limit -->
                 <DockPanel Grid.Row="0">
                     <TextBlock Text="5h" Foreground="#89B4FA" FontSize="9" FontWeight="Bold" Width="18"/>
-                    <TextBlock Text="{Binding Quota5hFormatted}" Foreground="#CDD6F4" FontSize="9" FontWeight="SemiBold" Width="28"/>
-                    <ProgressBar Height="3" Value="{Binding CurrentUsage.Quota5hPercent}" Minimum="0" Maximum="100" Margin="2,0,4,0" Foreground="{Binding Color5hHex}" Background="#313244" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding CurrentUsage.Reset5hCountdown}" Foreground="#F9E2AF" FontSize="8.5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Quota5hFormatted}" Foreground="#CDD6F4" FontSize="9" FontWeight="SemiBold" Width="38"/>
+                    <ProgressBar Height="3" Value="{Binding CurrentUsage.Gemini5hPercent}" Minimum="0" Maximum="100" Margin="2,0,4,0" Foreground="{Binding Color5hHex}" Background="#313244" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding CurrentUsage.GeminiResetTime}" Foreground="#F9E2AF" FontSize="8.5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                 </DockPanel>
 
                 <!-- Bottom Row: Weekly limit -->
                 <DockPanel Grid.Row="1" Margin="0,1,0,0">
                     <TextBlock Text="Wk" Foreground="#CBA6F7" FontSize="9" FontWeight="Bold" Width="18"/>
-                    <TextBlock Text="{Binding WeeklyFormatted}" Foreground="#CDD6F4" FontSize="9" FontWeight="SemiBold" Width="28"/>
-                    <ProgressBar Height="3" Value="{Binding CurrentUsage.WeeklyQuotaPercent}" Minimum="0" Maximum="100" Margin="2,0,4,0" Foreground="{Binding ColorWeeklyHex}" Background="#313244" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding CurrentUsage.WeeklyResetCountdown}" Foreground="#A6ADC8" FontSize="8.5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding WeeklyFormatted}" Foreground="#CDD6F4" FontSize="9" FontWeight="SemiBold" Width="38"/>
+                    <ProgressBar Height="3" Value="{Binding CurrentUsage.GeminiWeeklyPercent}" Minimum="0" Maximum="100" Margin="2,0,4,0" Foreground="{Binding ColorWeeklyHex}" Background="#313244" VerticalAlignment="Center"/>
+                    <TextBlock Text="7m" Foreground="#A6ADC8" FontSize="8.5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                 </DockPanel>
             </Grid>
         </Grid>
