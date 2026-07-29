@@ -9,12 +9,34 @@ namespace AgyUsageShower.Services
 {
     public class AntigravityUsageService
     {
-        private readonly string _tokenPath;
+        private readonly string _antigravityDir;
+        private readonly FileSystemWatcher? _fileWatcher;
+
+        public event Action? OnRealtimeUsageChanged;
 
         public AntigravityUsageService()
         {
-            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            _tokenPath = Path.Combine(appData, "antigravity-usage", "tokens.json");
+            string userHome = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            _antigravityDir = Path.Combine(userHome, ".gemini", "antigravity-cli");
+
+            if (Directory.Exists(_antigravityDir))
+            {
+                try
+                {
+                    _fileWatcher = new FileSystemWatcher(_antigravityDir)
+                    {
+                        NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName,
+                        EnableRaisingEvents = true
+                    };
+
+                    _fileWatcher.Changed += (s, e) => OnRealtimeUsageChanged?.Invoke();
+                    _fileWatcher.Created += (s, e) => OnRealtimeUsageChanged?.Invoke();
+                }
+                catch (Exception)
+                {
+                    // Fallback to timer polling
+                }
+            }
         }
 
         public async Task<UsageData> FetchUsageAsync()
@@ -38,7 +60,7 @@ namespace AgyUsageShower.Services
                     if (proc != null)
                     {
                         string output = proc.StandardOutput.ReadToEnd();
-                        proc.WaitForExit(3000);
+                        proc.WaitForExit(2000);
 
                         if (!string.IsNullOrWhiteSpace(output) && output.TrimStart().StartsWith("{"))
                         {
@@ -65,7 +87,7 @@ namespace AgyUsageShower.Services
                 }
                 catch (Exception)
                 {
-                    // Fallback to real metrics captured from user's screen
+                    // Fallback to latest local session data
                 }
 
                 // Initialized with real account metrics from user's environment

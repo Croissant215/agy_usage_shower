@@ -22,6 +22,13 @@ namespace AgyUsageShower.ViewModels
             _usageService = new AntigravityUsageService();
             _currentUsage = new UsageData();
 
+            // Real-time FileSystemWatcher trigger (instant update on prompt/log change)
+            _usageService.OnRealtimeUsageChanged += () =>
+            {
+                System.Windows.Application.Current?.Dispatcher.InvokeAsync(async () => await RefreshUsageAsync());
+            };
+
+            // Periodic 2-second polling timer
             _timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromSeconds(2)
