@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Models &amp; Quotas"
-        Width="350" Height="340"
+        Width="350" Height="360"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -48,7 +48,7 @@
                                 <TextBlock Text="{Binding CurrentUsage.GeminiWeeklyPercent, StringFormat='{}{0:F2}%'}" Foreground="{Binding ProgressWkHex}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
                             </DockPanel>
                             <ProgressBar Height="6" Value="{Binding CurrentUsage.GeminiWeeklyPercent}" Minimum="0" Maximum="100" Foreground="{Binding ProgressWkHex}" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
-                            <TextBlock Text="35% remaining · Refreshes in 7m" Foreground="{Binding SubTextHex}" FontSize="9" Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding CurrentUsage.GeminiWeeklyPercent, StringFormat='{}{0:F0}% remaining · Refreshes in 167h 41m'}" Foreground="{Binding SubTextHex}" FontSize="9" Margin="0,0,0,8"/>
 
                             <!-- Five Hour Limit -->
                             <DockPanel Margin="0,2,0,1">
@@ -56,7 +56,7 @@
                                 <TextBlock Text="{Binding CurrentUsage.Gemini5hPercent, StringFormat='{}{0:F2}%'}" Foreground="{Binding BrandPinkHex}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
                             </DockPanel>
                             <ProgressBar Height="6" Value="{Binding CurrentUsage.Gemini5hPercent}" Minimum="0" Maximum="100" Foreground="{Binding BrandPinkHex}" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
-                            <TextBlock Text="29% remaining · Refreshes in 7m" Foreground="{Binding SubTextHex}" FontSize="9"/>
+                            <TextBlock Text="{Binding CurrentUsage.GeminiResetTime, StringFormat='{}{0} remaining · Refreshes live'}" Foreground="{Binding SubTextHex}" FontSize="9"/>
                         </StackPanel>
                     </Border>
 
@@ -88,7 +88,7 @@
 
             <!-- Footer -->
             <DockPanel Grid.Row="2" Margin="0,10,0,0">
-                <TextBlock Text="Real-time AGY Sync" Foreground="{Binding SubTextHex}" FontSize="9.5" VerticalAlignment="Center"/>
+                <Button Content="🔑 Login Google Account" Click="LoginButton_Click" Background="{Binding ProgressBgHex}" Foreground="{Binding BrandPinkHex}" BorderThickness="0" Padding="8,4" FontSize="10" FontWeight="Bold" Cursor="Hand"/>
                 <Button Content="🔄 Sync Now" Click="RefreshButton_Click" HorizontalAlignment="Right" Background="{Binding ProgressBgHex}" Foreground="{Binding MainTextHex}" BorderThickness="0" Padding="8,4" FontSize="10" Cursor="Hand"/>
             </DockPanel>
         </Grid>

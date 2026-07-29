@@ -32,6 +32,11 @@ namespace AgyUsageShower.Views
             }
         }
 
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            AntigravityUsageService.TriggerGoogleLogin();
+        }
+
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainViewModel vm)
