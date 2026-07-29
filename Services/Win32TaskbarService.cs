@@ -62,6 +62,20 @@ namespace AgyUsageShower.Services
         public const uint SWP_NOACTIVATE = 0x0010;
         public const uint SWP_SHOWWINDOW = 0x0040;
 
+        private static int _lastX = -9999;
+        private static int _lastY = -9999;
+        private static bool _isParentSet = false;
+
+        public static void HideFromAltTab(Window window)
+        {
+            IntPtr hwnd = new WindowInteropHelper(window).Handle;
+            if (hwnd == IntPtr.Zero) return;
+
+            int exStyle = GetWindowLong32(hwnd, GWL_EXSTYLE);
+            exStyle |= WS_EX_TOOLWINDOW;
+            SetWindowLong32(hwnd, GWL_EXSTYLE, exStyle);
+        }
+
         public static bool EmbedInsideTaskbar(Window window, double widthDip, double heightDip)
         {
             IntPtr windowHwnd = new WindowInteropHelper(window).Handle;
@@ -70,13 +84,20 @@ namespace AgyUsageShower.Services
             IntPtr taskbarHwnd = FindWindow("Shell_TrayWnd", null);
             if (taskbarHwnd == IntPtr.Zero) return false;
 
-            // Set parent to Shell_TrayWnd so it becomes an ACTUAL CHILD of the Taskbar
-            SetParent(windowHwnd, taskbarHwnd);
+            // Set parent to Shell_TrayWnd ONLY ONCE to prevent flickering
+            if (!_isParentSet)
+            {
+                SetParent(windowHwnd, taskbarHwnd);
+                int style = GetWindowLong32(windowHwnd, GWL_STYLE);
+                style = (style & ~0x8000000) | WS_CHILD | WS_VISIBLE;
+                SetWindowLong32(windowHwnd, GWL_STYLE, style);
 
-            // Change window style to WS_CHILD | WS_VISIBLE
-            int style = GetWindowLong32(windowHwnd, GWL_STYLE);
-            style = (style & ~0x8000000) | WS_CHILD | WS_VISIBLE; // Remove WS_POPUP, add WS_CHILD
-            SetWindowLong32(windowHwnd, GWL_STYLE, style);
+                int exStyle = GetWindowLong32(windowHwnd, GWL_EXSTYLE);
+                exStyle |= WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE;
+                SetWindowLong32(windowHwnd, GWL_EXSTYLE, exStyle);
+
+                _isParentSet = true;
+            }
 
             // Calculate DPI scaling
             double dpiScaleX = 1.0;
@@ -106,7 +127,13 @@ namespace AgyUsageShower.Services
                 int targetY = (taskbarRect.Height - pixelHeight) / 2;
                 if (targetY < 0) targetY = 2;
 
-                SetWindowPos(windowHwnd, IntPtr.Zero, targetX, targetY, pixelWidth, pixelHeight, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+                // Move ONLY IF position actually changed! Avoids DWM redraw flickering.
+                if (targetX != _lastX || targetY != _lastY)
+                {
+                    _lastX = targetX;
+                    _lastY = targetY;
+                    SetWindowPos(windowHwnd, IntPtr.Zero, targetX, targetY, pixelWidth, pixelHeight, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+                }
                 return true;
             }
 

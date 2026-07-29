@@ -22,7 +22,7 @@ namespace AgyUsageShower
 
             _repositionTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(2)
+                Interval = TimeSpan.FromSeconds(5)
             };
             _repositionTimer.Tick += (s, e) => EmbedInsideTaskbar();
             _repositionTimer.Start();
@@ -32,6 +32,7 @@ namespace AgyUsageShower
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            Win32TaskbarService.HideFromAltTab(this);
             EmbedInsideTaskbar();
         }
 

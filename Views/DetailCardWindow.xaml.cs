@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using AgyUsageShower.Services;
 using AgyUsageShower.ViewModels;
 
 namespace AgyUsageShower.Views
@@ -10,6 +11,7 @@ namespace AgyUsageShower.Views
         {
             InitializeComponent();
             DataContext = viewModel;
+            Loaded += (s, e) => Win32TaskbarService.HideFromAltTab(this);
         }
 
         private void Window_Deactivated(object sender, EventArgs e)
