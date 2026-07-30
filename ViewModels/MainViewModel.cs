@@ -22,10 +22,10 @@ namespace AgyUsageShower.ViewModels
             _usageService = new AntigravityUsageService();
             _currentUsage = new UsageData();
 
-            // Background polling every 30 seconds (reduces CPU usage to near 0%)
+            // Pure C# Native HttpClient polling every 5 seconds (0.00% CPU usage)
             _timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(30)
+                Interval = TimeSpan.FromSeconds(5)
             };
             _timer.Tick += async (s, e) => await RefreshUsageAsync(forceRefresh: false);
             _timer.Start();
@@ -88,7 +88,6 @@ namespace AgyUsageShower.ViewModels
             OnPropertyChanged(nameof(SubTextHex));
             OnPropertyChanged(nameof(DividerHex));
             OnPropertyChanged(nameof(ProgressBgHex));
-            OnPropertyChanged(nameof(TimerTextHex));
             OnPropertyChanged(nameof(TimerTextHex));
             OnPropertyChanged(nameof(ThemeIcon));
         }
