@@ -22,21 +22,15 @@ namespace AgyUsageShower.ViewModels
             _usageService = new AntigravityUsageService();
             _currentUsage = new UsageData();
 
-            // Real-time FileSystemWatcher trigger (instant update on prompt/log change)
-            _usageService.OnRealtimeUsageChanged += () =>
-            {
-                System.Windows.Application.Current?.Dispatcher.InvokeAsync(async () => await RefreshUsageAsync());
-            };
-
-            // Periodic 2-second polling timer
+            // Background polling every 30 seconds (reduces CPU usage to near 0%)
             _timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(2)
+                Interval = TimeSpan.FromSeconds(30)
             };
-            _timer.Tick += async (s, e) => await RefreshUsageAsync();
+            _timer.Tick += async (s, e) => await RefreshUsageAsync(forceRefresh: false);
             _timer.Start();
 
-            _ = RefreshUsageAsync();
+            _ = RefreshUsageAsync(forceRefresh: true);
         }
 
         public UsageData CurrentUsage
@@ -95,12 +89,13 @@ namespace AgyUsageShower.ViewModels
             OnPropertyChanged(nameof(DividerHex));
             OnPropertyChanged(nameof(ProgressBgHex));
             OnPropertyChanged(nameof(TimerTextHex));
+            OnPropertyChanged(nameof(TimerTextHex));
             OnPropertyChanged(nameof(ThemeIcon));
         }
 
-        public async Task RefreshUsageAsync()
+        public async Task RefreshUsageAsync(bool forceRefresh = false)
         {
-            CurrentUsage = await _usageService.FetchUsageAsync();
+            CurrentUsage = await _usageService.FetchUsageAsync(forceRefresh);
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

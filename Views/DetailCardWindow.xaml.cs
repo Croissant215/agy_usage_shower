@@ -37,7 +37,7 @@ namespace AgyUsageShower.Views
             AntigravityUsageService.TriggerGoogleLogin();
             if (DataContext is MainViewModel vm)
             {
-                await vm.RefreshUsageAsync();
+                await vm.RefreshUsageAsync(forceRefresh: true);
             }
         }
 
@@ -46,7 +46,7 @@ namespace AgyUsageShower.Views
             AntigravityUsageService.TriggerLogout();
             if (DataContext is MainViewModel vm)
             {
-                await vm.RefreshUsageAsync();
+                await vm.RefreshUsageAsync(forceRefresh: true);
             }
         }
 
@@ -54,7 +54,7 @@ namespace AgyUsageShower.Views
         {
             if (DataContext is MainViewModel vm)
             {
-                await vm.RefreshUsageAsync();
+                await vm.RefreshUsageAsync(forceRefresh: true);
             }
         }
     }
