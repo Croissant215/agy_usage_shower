@@ -70,16 +70,28 @@ namespace AgyUsageShower.Services
                         RedirectStandardOutput = true,
                         RedirectStandardError = true
                     };
+                    psi.EnvironmentVariables["NO_UPDATE_NOTIFIER"] = "1";
+                    psi.EnvironmentVariables["npm_config_update_notifier"] = "false";
 
                     using var process = System.Diagnostics.Process.Start(psi);
                     if (process != null)
                     {
                         var cts = new System.Threading.CancellationTokenSource(15000); // 15 seconds timeout
-                        
-                        // Read stdout first to prevent pipe buffer deadlock
                         var readOutputTask = process.StandardOutput.ReadToEndAsync();
                         
-                        await process.WaitForExitAsync(cts.Token);
+                        try 
+                        {
+                            await process.WaitForExitAsync(cts.Token);
+                        }
+                        catch (TaskCanceledException)
+                        {
+                            if (!process.HasExited)
+                            {
+                                process.Kill(true); // Kill cmd.exe and its children (npx, node.js)
+                            }
+                            throw;
+                        }
+
                         string respString = await readOutputTask;
 
                         if (process.ExitCode == 0 && !string.IsNullOrWhiteSpace(respString))
@@ -199,12 +211,25 @@ namespace AgyUsageShower.Services
                     RedirectStandardOutput = false,
                     RedirectStandardError = false
                 };
+                psi.EnvironmentVariables["NO_UPDATE_NOTIFIER"] = "1";
+                psi.EnvironmentVariables["npm_config_update_notifier"] = "false";
 
                 using var process = System.Diagnostics.Process.Start(psi);
                 if (process != null)
                 {
                     var cts = new System.Threading.CancellationTokenSource(10000);
-                    await process.WaitForExitAsync(cts.Token);
+                    try
+                    {
+                        await process.WaitForExitAsync(cts.Token);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        if (!process.HasExited)
+                        {
+                            process.Kill(true);
+                        }
+                        throw;
+                    }
                 }
             }
             catch (Exception)
