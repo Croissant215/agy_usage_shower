@@ -48,7 +48,7 @@
                                 <TextBlock Text="{Binding CurrentUsage.GeminiWeeklyPercent, StringFormat='{}{0:F2}%'}" Foreground="{Binding ProgressWkHex}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
                             </DockPanel>
                             <ProgressBar Height="6" Value="{Binding CurrentUsage.GeminiWeeklyPercent}" Minimum="0" Maximum="100" Foreground="{Binding ProgressWkHex}" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
-                            <TextBlock Text="{Binding CurrentUsage.GeminiWeeklyPercent, StringFormat='{}{0:F0}% remaining · Refreshes in 167h 41m'}" Foreground="{Binding SubTextHex}" FontSize="9" Margin="0,0,0,8"/>
+                            <TextBlock Text="{Binding CurrentUsage.GeminiWeeklyPercent, StringFormat='{}{0:F0}% remaining · Weekly limit unavailable in API'}" Foreground="{Binding SubTextHex}" FontSize="9" Margin="0,0,0,8"/>
 
                             <!-- Five Hour Limit -->
                             <DockPanel Margin="0,2,0,1">
@@ -56,7 +56,7 @@
                                 <TextBlock Text="{Binding CurrentUsage.Gemini5hPercent, StringFormat='{}{0:F2}%'}" Foreground="{Binding BrandPinkHex}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
                             </DockPanel>
                             <ProgressBar Height="6" Value="{Binding CurrentUsage.Gemini5hPercent}" Minimum="0" Maximum="100" Foreground="{Binding BrandPinkHex}" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
-                            <TextBlock Text="{Binding CurrentUsage.GeminiResetTime, StringFormat='{}{0} remaining · Refreshes live'}" Foreground="{Binding SubTextHex}" FontSize="9"/>
+                            <TextBlock Text="{Binding CurrentUsage.GeminiResetTime, StringFormat='{}Refreshes in {0}'}" Foreground="{Binding SubTextHex}" FontSize="9"/>
                         </StackPanel>
                     </Border>
 
@@ -72,7 +72,7 @@
                                 <TextBlock Text="100.00%" Foreground="#00E676" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
                             </DockPanel>
                             <ProgressBar Height="6" Value="100" Minimum="0" Maximum="100" Foreground="#00E676" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
-                            <TextBlock Text="Quota available" Foreground="{Binding SubTextHex}" FontSize="9" Margin="0,0,0,8"/>
+                            <TextBlock Text="100% remaining · Weekly limit unavailable in API" Foreground="{Binding SubTextHex}" FontSize="9" Margin="0,0,0,8"/>
 
                             <!-- Five Hour Limit -->
                             <DockPanel Margin="0,2,0,1">
