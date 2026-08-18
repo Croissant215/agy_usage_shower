@@ -24,10 +24,10 @@ namespace AgyUsageShower.ViewModels
             _usageService = new AntigravityUsageService();
             _currentUsage = new UsageData();
 
-            // Pure C# Native HttpClient polling every 5 seconds (0.00% CPU usage)
+            // Background polling every 60 seconds to save CPU/RAM when using CLI
             _timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(5)
+                Interval = TimeSpan.FromSeconds(60)
             };
             _timer.Tick += async (s, e) => 
             {
