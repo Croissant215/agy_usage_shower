@@ -28,5 +28,8 @@ namespace AgyUsageShower.Models
                 return $"🟢 Connected: {AccountEmail}";
             }
         }
+
+        public string LoginButtonText => IsLoggedIn ? "🔄 계정 전환" : "🔌 로그인 (계정 연결)";
+        public string LogoutVisibility => IsLoggedIn ? "Visible" : "Collapsed";
     }
 }
