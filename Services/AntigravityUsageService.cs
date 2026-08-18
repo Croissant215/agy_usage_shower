@@ -74,12 +74,16 @@ namespace AgyUsageShower.Services
                     using var process = System.Diagnostics.Process.Start(psi);
                     if (process != null)
                     {
-                        var cts = new System.Threading.CancellationTokenSource(8000);
+                        var cts = new System.Threading.CancellationTokenSource(15000); // 15 seconds timeout
+                        
+                        // Read stdout first to prevent pipe buffer deadlock
+                        var readOutputTask = process.StandardOutput.ReadToEndAsync();
+                        
                         await process.WaitForExitAsync(cts.Token);
+                        string respString = await readOutputTask;
 
-                        if (process.ExitCode == 0)
+                        if (process.ExitCode == 0 && !string.IsNullOrWhiteSpace(respString))
                         {
-                            string respString = await process.StandardOutput.ReadToEndAsync();
                             using JsonDocument respDoc = JsonDocument.Parse(respString);
                             JsonElement respRoot = respDoc.RootElement;
 
@@ -192,8 +196,8 @@ namespace AgyUsageShower.Services
                     Arguments = "/c npx antigravity-usage usage",
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
+                    RedirectStandardOutput = false,
+                    RedirectStandardError = false
                 };
 
                 using var process = System.Diagnostics.Process.Start(psi);
