@@ -17,6 +17,8 @@ namespace AgyUsageShower.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        private bool _isRefreshing = false;
+
         public MainViewModel()
         {
             _usageService = new AntigravityUsageService();
@@ -27,7 +29,19 @@ namespace AgyUsageShower.ViewModels
             {
                 Interval = TimeSpan.FromSeconds(5)
             };
-            _timer.Tick += async (s, e) => await RefreshUsageAsync(forceRefresh: false);
+            _timer.Tick += async (s, e) => 
+            {
+                if (_isRefreshing) return;
+                _isRefreshing = true;
+                try
+                {
+                    await RefreshUsageAsync(forceRefresh: false);
+                }
+                finally
+                {
+                    _isRefreshing = false;
+                }
+            };
             _timer.Start();
 
             _ = RefreshUsageAsync(forceRefresh: true);

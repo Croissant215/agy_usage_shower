@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP
 C:\Users\test\orca\agy_usage_shower\App.xaml
-2-273227439
+3-524239744
 
-8592647626
-200161758370
-MainWindow.xaml;Views\DetailCardWindow.xaml;
+10-577514254
+2101322415471
+Controls\RunCatControl.xaml;MainWindow.xaml;Views\DetailCardWindow.xaml;
 
 False
 
