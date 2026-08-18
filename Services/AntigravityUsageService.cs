@@ -30,6 +30,15 @@ namespace AgyUsageShower.Services
         {
             if (File.Exists(_tokensPath)) return _tokensPath;
 
+            // Check for tokens.json in accounts subdirectories (npx antigravity-usage login behavior)
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string accountsDir = Path.Combine(appData, "antigravity-usage", "accounts");
+            if (Directory.Exists(accountsDir))
+            {
+                var files = Directory.GetFiles(accountsDir, "tokens.json", SearchOption.AllDirectories);
+                if (files.Length > 0) return files[0];
+            }
+
             string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string alt1 = Path.Combine(userProfile, ".gemini", "antigravity-usage", "tokens.json");
             if (File.Exists(alt1)) return alt1;
@@ -215,10 +224,18 @@ namespace AgyUsageShower.Services
             try
             {
                 string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                
                 string tokensPath = Path.Combine(appData, "antigravity-usage", "tokens.json");
-                if (File.Exists(tokensPath))
+                if (File.Exists(tokensPath)) File.Delete(tokensPath);
+
+                string accountsDir = Path.Combine(appData, "antigravity-usage", "accounts");
+                if (Directory.Exists(accountsDir))
                 {
-                    File.Delete(tokensPath);
+                    var files = Directory.GetFiles(accountsDir, "tokens.json", SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        File.Delete(file);
+                    }
                 }
             }
             catch (Exception)
