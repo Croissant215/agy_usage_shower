@@ -58,34 +58,41 @@ namespace AgyUsageShower.Services
         {
             try
             {
-                string? tokenPath = GetTokenFilePath();
-                if (tokenPath != null)
+                bool loggedIn = CheckIsLoggedIn();
+                if (loggedIn)
                 {
-                    string jsonContent = await File.ReadAllTextAsync(tokenPath);
-                    using JsonDocument doc = JsonDocument.Parse(jsonContent);
-                    JsonElement root = doc.RootElement;
-
-                    string? accessToken = root.TryGetProperty("access_token", out var at) ? at.GetString() : null;
-                    string? email = root.TryGetProperty("account", out var acc) ? acc.GetString() : null;
-
-                    if (!string.IsNullOrEmpty(accessToken))
+                    System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo
                     {
-                        var request = new HttpRequestMessage(HttpMethod.Get, "https://cloudcode.googleapis.com/v1alpha/users/me/quotas");
-                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                        request.Headers.UserAgent.ParseAdd("Antigravity-Shower/1.0");
+                        FileName = "cmd.exe",
+                        Arguments = "/c npx antigravity-usage usage --json",
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true
+                    };
 
-                        HttpResponseMessage response = await _httpClient.SendAsync(request);
-                        if (response.IsSuccessStatusCode)
+                    using var process = System.Diagnostics.Process.Start(psi);
+                    if (process != null)
+                    {
+                        var cts = new System.Threading.CancellationTokenSource(8000);
+                        await process.WaitForExitAsync(cts.Token);
+
+                        if (process.ExitCode == 0)
                         {
-                            string respString = await response.Content.ReadAsStringAsync();
+                            string respString = await process.StandardOutput.ReadToEndAsync();
                             using JsonDocument respDoc = JsonDocument.Parse(respString);
                             JsonElement respRoot = respDoc.RootElement;
+
+                            string email = "Connected Account";
+                            if (respRoot.TryGetProperty("email", out var emailProp))
+                            {
+                                email = emailProp.GetString() ?? email;
+                            }
 
                             double geminiRem = 100.0;
                             double geminiWeeklyRem = 100.0;
                             double claudeRem = 100.0;
                             string resetIn = "Quota available";
-
                             bool foundGemini5h = false;
 
                             if (respRoot.TryGetProperty("models", out var modelsArr) && modelsArr.ValueKind == JsonValueKind.Array)
@@ -98,7 +105,7 @@ namespace AgyUsageShower.Services
                                     if (label.Contains("Gemini", StringComparison.OrdinalIgnoreCase))
                                     {
                                         bool isWeekly = label.Contains("Weekly", StringComparison.OrdinalIgnoreCase) || label.Contains("7d", StringComparison.OrdinalIgnoreCase);
-                                        bool is5h = label.Contains("5h", StringComparison.OrdinalIgnoreCase) || label.Contains("5-hour", StringComparison.OrdinalIgnoreCase) || label.Contains("Hourly", StringComparison.OrdinalIgnoreCase);
+                                        bool is5h = label.Contains("5h", StringComparison.OrdinalIgnoreCase) || label.Contains("5-hour", StringComparison.OrdinalIgnoreCase) || label.Contains("Hourly", StringComparison.OrdinalIgnoreCase) || label.Contains("Medium", StringComparison.OrdinalIgnoreCase) || label.Contains("High", StringComparison.OrdinalIgnoreCase);
 
                                         if (isWeekly)
                                         {
@@ -125,7 +132,7 @@ namespace AgyUsageShower.Services
 
                             _lastData = new UsageData
                             {
-                                AccountEmail = email ?? "Connected Account",
+                                AccountEmail = email,
                                 GeminiWeeklyPercent = geminiWeeklyRem,
                                 Gemini5hPercent = geminiRem,
                                 GeminiResetTime = resetIn,
@@ -140,8 +147,9 @@ namespace AgyUsageShower.Services
                             OnRealtimeUsageChanged?.Invoke();
                             return _lastData;
                         }
-                        else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized && !isRetry)
+                        else if (!isRetry)
                         {
+                            // If exit code is not 0 (e.g., auth error), try to refresh token
                             return await TryRefreshTokenAndRetryAsync(forceRefresh);
                         }
                     }
@@ -151,10 +159,10 @@ namespace AgyUsageShower.Services
             {
             }
 
-            bool loggedIn = CheckIsLoggedIn();
+            bool loggedInFinal = CheckIsLoggedIn();
             _lastData = new UsageData
             {
-                AccountEmail = loggedIn ? "Connected Account" : "Not Logged In",
+                AccountEmail = loggedInFinal ? "Connected Account" : "Not Logged In",
                 GeminiWeeklyPercent = 0.0,
                 Gemini5hPercent = 0.0,
                 GeminiResetTime = "-",
@@ -162,8 +170,8 @@ namespace AgyUsageShower.Services
                 Claude5hPercent = 0.0,
                 ClaudeResetTime = "-",
                 IsRealData = false,
-                IsOffline = !loggedIn,
-                IsLoggedIn = loggedIn,
+                IsOffline = !loggedInFinal,
+                IsLoggedIn = loggedInFinal,
                 IsRefreshingToken = false
             };
 
