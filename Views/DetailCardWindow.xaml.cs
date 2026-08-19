@@ -57,5 +57,10 @@ namespace AgyUsageShower.Views
                 await vm.RefreshUsageAsync(forceRefresh: true);
             }
         }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }

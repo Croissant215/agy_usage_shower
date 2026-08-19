@@ -78,11 +78,13 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Content="{Binding CurrentUsage.LoginButtonText}" Click="SwitchAccountButton_Click" Background="{Binding ProgressBgHex}" Foreground="{Binding BrandPinkHex}" BorderThickness="0" Padding="6,4" FontSize="9.5" FontWeight="Bold" Cursor="Hand" Margin="0,0,4,0"/>
                 <Button Grid.Column="1" Content="🚪 로그아웃" Visibility="{Binding CurrentUsage.LogoutVisibility}" Click="LogoutButton_Click" Background="{Binding ProgressBgHex}" Foreground="{Binding SubTextHex}" BorderThickness="0" Padding="6,4" FontSize="9.5" Cursor="Hand"/>
-                <Button Grid.Column="2" Content="🔄 Sync" Click="RefreshButton_Click" HorizontalAlignment="Right" Background="{Binding ProgressBgHex}" Foreground="{Binding MainTextHex}" BorderThickness="0" Padding="8,4" FontSize="9.5" Cursor="Hand"/>
+                <Button Grid.Column="2" Content="🔄 Sync" Click="RefreshButton_Click" HorizontalAlignment="Right" Background="{Binding ProgressBgHex}" Foreground="{Binding MainTextHex}" BorderThickness="0" Padding="8,4" FontSize="9.5" Cursor="Hand" Margin="0,0,4,0"/>
+                <Button Grid.Column="3" Content="✖ 종료" Click="ExitButton_Click" HorizontalAlignment="Right" Background="#FF4444" Foreground="#FFFFFF" BorderThickness="0" Padding="8,4" FontSize="9.5" Cursor="Hand" ToolTip="완전히 앱을 종료합니다"/>
             </Grid>
         </Grid>
     </Border>

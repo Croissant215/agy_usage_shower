@@ -14,6 +14,7 @@ namespace AgyUsageShower.ViewModels
         private readonly DispatcherTimer _timer;
         private UsageData _currentUsage;
         private bool _isDarkTheme = true;
+        private readonly string _settingsFilePath;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -23,6 +24,14 @@ namespace AgyUsageShower.ViewModels
         {
             _usageService = new AntigravityUsageService();
             _currentUsage = new UsageData();
+
+            var folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AgyUsageShower");
+            if (!System.IO.Directory.Exists(folder))
+            {
+                System.IO.Directory.CreateDirectory(folder);
+            }
+            _settingsFilePath = System.IO.Path.Combine(folder, "settings.json");
+            LoadSettings();
 
             // Background polling every 60 seconds to save CPU/RAM when using CLI
             _timer = new DispatcherTimer
@@ -91,6 +100,33 @@ namespace AgyUsageShower.ViewModels
         public void ToggleTheme()
         {
             IsDarkTheme = !IsDarkTheme;
+            SaveSettings();
+        }
+
+        private void LoadSettings()
+        {
+            try
+            {
+                if (System.IO.File.Exists(_settingsFilePath))
+                {
+                    string json = System.IO.File.ReadAllText(_settingsFilePath);
+                    if (json.Contains("\"IsDarkTheme\":false"))
+                    {
+                        IsDarkTheme = false; // Using property to trigger notify
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void SaveSettings()
+        {
+            try
+            {
+                string json = $"{{\"IsDarkTheme\":{_isDarkTheme.ToString().ToLower()}}}";
+                System.IO.File.WriteAllText(_settingsFilePath, json);
+            }
+            catch { }
         }
 
         private void NotifyThemePropertiesChanged()
