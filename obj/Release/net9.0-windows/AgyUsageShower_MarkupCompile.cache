@@ -1,19 +1,19 @@
 ﻿AgyUsageShower
-
+1.1.12.0
 
 winexe
 C#
 .cs
-C:\Users\test\orca\agy_usage_shower\obj\Release\net9.0-windows\
+C:\Users\psych\Downloads\AgyUsageShower-v1.1.11\repo\obj\Release\net9.0-windows\
 AgyUsageShower
 none
 false
-TRACE;RELEASE;NET;NET9_0;NETCOREAPP
-C:\Users\test\orca\agy_usage_shower\App.xaml
+TRACE;RELEASE;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
+C:\Users\psych\Downloads\AgyUsageShower-v1.1.11\repo\App.xaml
 3-524239744
 
-11163674329
-2101322415471
+10-314182811
+210977464221
 Controls\RunCatControl.xaml;MainWindow.xaml;Views\DetailCardWindow.xaml;
 
 False

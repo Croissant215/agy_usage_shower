@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v9.0": {
-      "AgyUsageShower/1.0.0": {
+      "AgyUsageShower/1.1.12": {
         "runtime": {
           "AgyUsageShower.dll": {}
         }
@@ -14,7 +14,7 @@
     }
   },
   "libraries": {
-    "AgyUsageShower/1.0.0": {
+    "AgyUsageShower/1.1.12": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

@@ -63,10 +63,10 @@
                             <!-- Five Hour Limit -->
                             <DockPanel Margin="0,2,0,1">
                                 <TextBlock Text="Five Hour Limit" Foreground="{Binding MainTextHex}" FontSize="10"/>
-                                <TextBlock Text="100.00%" Foreground="#00E676" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                <TextBlock Text="{Binding CurrentUsage.Claude5hPercent, StringFormat='{}{0:F2}%'}" Foreground="#00E676" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
                             </DockPanel>
-                            <ProgressBar Height="6" Value="100" Minimum="0" Maximum="100" Foreground="#00E676" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
-                            <TextBlock Text="Quota available" Foreground="{Binding SubTextHex}" FontSize="9"/>
+                            <ProgressBar Height="6" Value="{Binding CurrentUsage.Claude5hPercent}" Minimum="0" Maximum="100" Foreground="#00E676" Background="{Binding WidgetBgHex}" Margin="0,2,0,2"/>
+                            <TextBlock Text="{Binding CurrentUsage.ClaudeResetTime, StringFormat='{}Refreshes in {0}'}" Foreground="{Binding SubTextHex}" FontSize="9"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>

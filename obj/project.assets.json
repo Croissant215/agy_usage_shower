@@ -8,24 +8,19 @@
     "net9.0-windows7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\test\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\psych\\.nuget\\packages\\": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "1.1.12",
     "restore": {
-      "projectUniqueName": "C:\\Users\\test\\orca\\agy_usage_shower\\AgyUsageShower.csproj",
+      "projectUniqueName": "C:\\Users\\psych\\Downloads\\AgyUsageShower-v1.1.11\\repo\\AgyUsageShower.csproj",
       "projectName": "AgyUsageShower",
-      "projectPath": "C:\\Users\\test\\orca\\agy_usage_shower\\AgyUsageShower.csproj",
-      "packagesPath": "C:\\Users\\test\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\test\\orca\\agy_usage_shower\\obj\\",
+      "projectPath": "C:\\Users\\psych\\Downloads\\AgyUsageShower-v1.1.11\\repo\\AgyUsageShower.csproj",
+      "packagesPath": "C:\\Users\\psych\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\psych\\Downloads\\AgyUsageShower-v1.1.11\\repo\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\test\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config"
+        "C:\\Users\\psych\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0-windows"
@@ -49,7 +44,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.100"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net9.0-windows7.0": {
@@ -73,7 +68,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Users\\psych\\dotnet9\\sdk\\9.0.318/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

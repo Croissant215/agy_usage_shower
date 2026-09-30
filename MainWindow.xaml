@@ -57,7 +57,7 @@
             <!-- Claude & GPT Status -->
             <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0,2,0">
                 <TextBlock Text="Claude " Foreground="{Binding SubTextHex}" FontSize="9.5"/>
-                <TextBlock Text="100%" Foreground="#00E676" FontSize="9.5" FontWeight="Bold"/>
+                <TextBlock Text="{Binding CurrentUsage.Claude5hPercent, StringFormat='{}{0:F0}%'}" Foreground="#00E676" FontSize="9.5" FontWeight="Bold"/>
             </StackPanel>
         </Grid>
     </Border>

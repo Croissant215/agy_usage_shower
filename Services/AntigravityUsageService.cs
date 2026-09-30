@@ -64,7 +64,7 @@ namespace AgyUsageShower.Services
                     System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo
                     {
                         FileName = "cmd.exe",
-                        Arguments = "/c npx antigravity-usage usage --json",
+                        Arguments = "/c npx -y antigravity-usage usage --json",
                         UseShellExecute = false,
                         CreateNoWindow = true,
                         RedirectStandardOutput = true,
@@ -76,8 +76,9 @@ namespace AgyUsageShower.Services
                     using var process = System.Diagnostics.Process.Start(psi);
                     if (process != null)
                     {
-                        var cts = new System.Threading.CancellationTokenSource(15000); // 15 seconds timeout
+                        var cts = new System.Threading.CancellationTokenSource(30000); // 30 seconds timeout
                         var readOutputTask = process.StandardOutput.ReadToEndAsync();
+                        var readErrorTask = process.StandardError.ReadToEndAsync(); // Drain stderr to prevent pipe buffer deadlock
                         
                         try 
                         {
@@ -93,9 +94,18 @@ namespace AgyUsageShower.Services
                         }
 
                         string respString = await readOutputTask;
+                        string errString = await readErrorTask; // Drained
 
                         if (process.ExitCode == 0 && !string.IsNullOrWhiteSpace(respString))
                         {
+                            // Strip any non-JSON noise (npm warnings, etc.) before parsing
+                            int firstBrace = respString.IndexOf('{');
+                            int lastBrace = respString.LastIndexOf('}');
+                            if (firstBrace >= 0 && lastBrace > firstBrace)
+                            {
+                                respString = respString.Substring(firstBrace, lastBrace - firstBrace + 1);
+                            }
+
                             using JsonDocument respDoc = JsonDocument.Parse(respString);
                             JsonElement respRoot = respDoc.RootElement;
 
@@ -109,39 +119,83 @@ namespace AgyUsageShower.Services
                             double geminiWeeklyRem = 100.0;
                             double claudeRem = 100.0;
                             string resetIn = "Quota available";
-                            bool foundGemini5h = false;
+                            string claudeResetIn = "Quota available";
 
                             if (respRoot.TryGetProperty("models", out var modelsArr) && modelsArr.ValueKind == JsonValueKind.Array)
                             {
+                                JsonElement? bestGeminiModel = null;
+                                int bestGeminiScore = -1;
+
+                                JsonElement? bestClaudeModel = null;
+                                int bestClaudeScore = -1;
+
                                 foreach (var m in modelsArr.EnumerateArray())
                                 {
                                     string label = m.TryGetProperty("label", out var l) ? l.GetString() ?? "" : "";
-                                    double remPct = m.TryGetProperty("remainingPercentage", out var rp) ? rp.GetDouble() * 100.0 : 100.0;
+                                    string modelId = m.TryGetProperty("modelId", out var mid) ? mid.GetString() ?? "" : "";
+                                    bool isAutocomplete = m.TryGetProperty("isAutocompleteOnly", out var ac) && ac.GetBoolean();
 
-                                    if (label.Contains("Gemini", StringComparison.OrdinalIgnoreCase))
+                                    // Match Gemini Models: Prioritize main interactive models over autocomplete-only
+                                    if (label.Contains("Gemini", StringComparison.OrdinalIgnoreCase) || modelId.Contains("gemini", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        bool isWeekly = label.Contains("Weekly", StringComparison.OrdinalIgnoreCase) || label.Contains("7d", StringComparison.OrdinalIgnoreCase);
-                                        bool is5h = label.Contains("5h", StringComparison.OrdinalIgnoreCase) || label.Contains("5-hour", StringComparison.OrdinalIgnoreCase) || label.Contains("Hourly", StringComparison.OrdinalIgnoreCase) || label.Contains("Medium", StringComparison.OrdinalIgnoreCase) || label.Contains("High", StringComparison.OrdinalIgnoreCase);
+                                        int score = 1;
+                                        if (!isAutocomplete) score += 10;
+                                        if (label.Contains("3.8", StringComparison.OrdinalIgnoreCase) || modelId.Contains("3.8", StringComparison.OrdinalIgnoreCase)) score += 50;
+                                        else if (label.Contains("3.1", StringComparison.OrdinalIgnoreCase) || modelId.Contains("3.1", StringComparison.OrdinalIgnoreCase)) score += 40;
+                                        else if (label.Contains("3.6", StringComparison.OrdinalIgnoreCase) || modelId.Contains("3.6", StringComparison.OrdinalIgnoreCase)) score += 30;
+                                        else if (label.Contains("3.5", StringComparison.OrdinalIgnoreCase) || modelId.Contains("3.5", StringComparison.OrdinalIgnoreCase)) score += 20;
+                                        else if (label.Contains("3", StringComparison.OrdinalIgnoreCase)) score += 15;
 
-                                        if (isWeekly)
+                                        if (label.Contains("High", StringComparison.OrdinalIgnoreCase) || modelId.Contains("high", StringComparison.OrdinalIgnoreCase)) score += 5;
+
+                                        if (score > bestGeminiScore)
                                         {
-                                            geminiWeeklyRem = Math.Round(remPct, 2);
-                                        }
-                                        else if (is5h || !foundGemini5h)
-                                        {
-                                            geminiRem = Math.Round(remPct, 2);
-                                            foundGemini5h = true;
-                                            if (m.TryGetProperty("timeUntilResetMs", out var ms))
-                                            {
-                                                long msVal = ms.GetInt64();
-                                                TimeSpan ts = TimeSpan.FromMilliseconds(msVal);
-                                                resetIn = ts.Hours > 0 ? $"{ts.Hours}h {ts.Minutes}m" : $"{ts.Minutes}m";
-                                            }
+                                            bestGeminiScore = score;
+                                            bestGeminiModel = m;
                                         }
                                     }
-                                    else if (label.Contains("Claude", StringComparison.OrdinalIgnoreCase))
+                                    // Match Claude Models: Opus / Sonnet
+                                    else if (label.Contains("Claude", StringComparison.OrdinalIgnoreCase) || modelId.Contains("claude", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        claudeRem = Math.Round(remPct, 2);
+                                        int score = 1;
+                                        if (label.Contains("Sonnet", StringComparison.OrdinalIgnoreCase) || modelId.Contains("sonnet", StringComparison.OrdinalIgnoreCase)) score += 30;
+                                        else if (label.Contains("Opus", StringComparison.OrdinalIgnoreCase) || modelId.Contains("opus", StringComparison.OrdinalIgnoreCase)) score += 20;
+
+                                        if (score > bestClaudeScore)
+                                        {
+                                            bestClaudeScore = score;
+                                            bestClaudeModel = m;
+                                        }
+                                    }
+                                }
+
+                                if (bestGeminiModel.HasValue)
+                                {
+                                    var gm = bestGeminiModel.Value;
+                                    if (gm.TryGetProperty("remainingPercentage", out var rp))
+                                    {
+                                        geminiRem = Math.Round(rp.GetDouble() * 100.0, 2);
+                                    }
+                                    if (gm.TryGetProperty("timeUntilResetMs", out var ms))
+                                    {
+                                        long msVal = ms.GetInt64();
+                                        TimeSpan ts = TimeSpan.FromMilliseconds(msVal);
+                                        resetIn = ts.Hours > 0 ? $"{ts.Hours}h {ts.Minutes}m" : $"{ts.Minutes}m";
+                                    }
+                                }
+
+                                if (bestClaudeModel.HasValue)
+                                {
+                                    var cm = bestClaudeModel.Value;
+                                    if (cm.TryGetProperty("remainingPercentage", out var rp))
+                                    {
+                                        claudeRem = Math.Round(rp.GetDouble() * 100.0, 2);
+                                    }
+                                    if (cm.TryGetProperty("timeUntilResetMs", out var ms))
+                                    {
+                                        long msVal = ms.GetInt64();
+                                        TimeSpan ts = TimeSpan.FromMilliseconds(msVal);
+                                        claudeResetIn = ts.Hours > 0 ? $"{ts.Hours}h {ts.Minutes}m" : $"{ts.Minutes}m";
                                     }
                                 }
                             }
@@ -154,7 +208,7 @@ namespace AgyUsageShower.Services
                                 GeminiResetTime = resetIn,
                                 ClaudeWeeklyPercent = claudeRem,
                                 Claude5hPercent = claudeRem,
-                                ClaudeResetTime = "Quota available",
+                                ClaudeResetTime = claudeResetIn,
                                 IsRealData = true,
                                 IsOffline = false,
                                 IsLoggedIn = true,
@@ -205,11 +259,11 @@ namespace AgyUsageShower.Services
                 System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = "cmd.exe",
-                    Arguments = "/c npx antigravity-usage usage",
+                    Arguments = "/c npx -y antigravity-usage usage",
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    RedirectStandardOutput = false,
-                    RedirectStandardError = false
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
                 };
                 psi.EnvironmentVariables["NO_UPDATE_NOTIFIER"] = "1";
                 psi.EnvironmentVariables["npm_config_update_notifier"] = "false";
@@ -217,7 +271,9 @@ namespace AgyUsageShower.Services
                 using var process = System.Diagnostics.Process.Start(psi);
                 if (process != null)
                 {
-                    var cts = new System.Threading.CancellationTokenSource(10000);
+                    var cts = new System.Threading.CancellationTokenSource(20000);
+                    var outTask = process.StandardOutput.ReadToEndAsync();
+                    var errTask = process.StandardError.ReadToEndAsync();
                     try
                     {
                         await process.WaitForExitAsync(cts.Token);
@@ -230,6 +286,8 @@ namespace AgyUsageShower.Services
                         }
                         throw;
                     }
+                    await outTask;
+                    await errTask;
                 }
             }
             catch (Exception)
